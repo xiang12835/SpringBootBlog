@@ -1,0 +1,66 @@
+<meta charset="UTF-8" />
+
+<div class="fly-card" id="top" >
+	<div class="fly-card-header">置顶</div>
+	<div class="fly-card-body" style="min-height: 100px;padding-bottom: 0px; ">
+		<div class="fly-list">
+			<div class="fly-list-item"  th:each="blog : ${topList}">
+				<div class="fly-head">
+					<img th:src="${blog.user.imageUrl}" src="/image/5.jpg" />
+				</div>
+				<div  style="float:left; width:80%; overflow: hidden;">
+					<div style="padding: 0px 0px 8px 0px; overflow: hidden; height: 23px;">
+						<a class="fly-list-type" th:text="${blog.blogType.name}">博客类型</a>
+						<a th:href="@{/blog/}+${blog.id}" class="fly-list-title" th:text="${blog.title}">博客标题</a>
+					</div>
+					
+					<div>
+						<a href="#" class="fly-list-name" th:text="${blog.user.trueName}">作者</a>
+						<span class="fly-list-time" th:text="${#dates.format(blog.createDateTime, 'yyyy-MM-dd HH:mm')}">1天前</span>
+					</div>
+				</div>
+				
+				<div  class="fly-right">
+					<span th:text="|浏览:${blog.clickHit}|">浏览:100</span>
+				</div>
+			</div>
+		</div><!--fly-list   结束 -->
+	</div>
+</div> <!-- 首页 选项卡结束 -->
+
+
+<div id="index" class="fly-card" style="margin-top: 20px;"><!-- 分类  选项卡开始  -->
+	<div class="fly-card-header">
+	最近发表
+	</div>
+	<div class="fly-card-body" style="min-height: 100px; padding-bottom: 0px; ">
+		<div class="fly-list">
+			<div class="fly-list-item"  th:each="blog : ${homeList}">
+				<div class="fly-head">
+					<img th:src="${blog.user.imageUrl}" src="/image/5.jpg" />
+				</div>
+				<div  style="float:left; width:80%; overflow: hidden;">
+					<div style="padding: 0px 0px 8px 0px; overflow: hidden; height: 23px;">
+						<a class="fly-list-type" th:text="${blog.blogType.name}">博客类型</a>
+						<a th:href="@{/blog/}+${blog.id}" class="fly-list-title" th:text="${blog.title}">博客标题</a>
+					</div>
+					
+					<div>
+						<a href="#" class="fly-list-name" th:text="${blog.user.trueName}">作者</a>
+						<span class="fly-list-time" th:text="${#dates.format(blog.createDateTime, 'yyyy-MM-dd HH:mm')}">1天前</span>
+					</div>
+				</div>
+				
+				<div  class="fly-right">
+					<span th:text="|浏览:${blog.clickHit}|">浏览:100</span>
+				</div>
+			</div>
+		</div><!--fly-list   结束 -->
+	</div>
+</div> <!-- 分类  选项卡结束 -->
+
+<div style="text-align: center; margin-top: 10px;">
+	<a class="b_btn" href="/all">查看更多</a>
+</div>
+
+

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="|${title} - ${application.config.stationName}|"></title>
+<meta name="description" th:content="${application.config.description}" />
+
+<div th:include="/common/layui"></div>
+<div th:include="/common/jq"></div>
+
+<link rel="stylesheet" href="/css/pc/base.css?v=11">
+<script	src="/js/pc/base.js"></script>
+
+<script type="text/javascript" src="/ueditor/third-party/SyntaxHighlighter/shCore.js"></script>
+<link rel="stylesheet" href="/ueditor/third-party/SyntaxHighlighter/shCoreDefault.css">
+
+</head>
+<style>
+</style>
+
+<script>
+$(function(){
+	formartTime("type");
+});
+
+</script>
+<body>
+
+<div class="wrap">
+
+<!-- 导航 -->
+<div class="model" style="background-color: #393D49;"   th:include="/pc/common/daohang" >
+</div>
+<!-- 导航 -->
+
+<style>
+</style>
+<div class="model" style="background-color: #9e9e9e40;">
+	<div class="content" style=" padding-top: 20px; padding-bottom: 20px;">
+			
+			<div class="layui-row">
+				
+				<div  class="layui-col-xs9"   >
+					<div class="fly-card" id="type" >  <!-- 分类 选项卡开始  -->
+						<div class="fly-card-header" >全部文章</div>
+						<div class="fly-card-body" style="min-height: 100px;padding-bottom: 0px; ">
+							<div class="fly-list">
+								<div class="fly-list-item"  th:each="blog : ${blogList}">
+									<div class="fly-head">
+										<img th:src="${blog.user.imageUrl}" src="/image/5.jpg" />
+									</div>
+									<div  style="float:left; width:80%; overflow: hidden;">
+										<div style="padding: 0px 0px 8px 0px; overflow: hidden; height: 23px;">
+											<a class="fly-list-type" th:text="${blog.blogType.name}">博客类型</a>
+											<a th:href="@{/blog/}+${blog.id}" class="fly-list-title" th:text="${blog.title}">博客标题</a>
+										</div>
+										<div>
+											<a href="#" class="fly-list-name" th:text="${blog.user.trueName}">作者</a>
+											<span class="fly-list-time" th:text="${#dates.format(blog.createDateTime, 'yyyy-MM-dd HH:mm')}">1天前</span>
+										</div>
+									</div>
+									
+									<div  class="fly-right">
+										<span th:text="|浏览:${blog.clickHit}|">浏览:100</span>
+									</div>
+								</div>
+							</div><!--fly-list   结束 -->
+						</div>
+						
+					</div> <!-- 分类 选项卡结束 -->
+					
+					
+					<div id="fenye"></div>
+					
+				</div>
+				
+				<div class="layui-col-xs3"   style="padding-left: 10px;"   th:include="/pc/common/index_right_page">
+				</div>
+			</div>
+			
+		<div style=" clear:both;"></div><!--content 内部   清除浮动 -->
+	</div>
+</div>
+
+
+<!-- 底部 内容 模块 -->
+<div class="model" style="background-color: #0c0d0e;"   th:include="/pc/common/foot">
+</div>
+<!-- 底部 内容 模块 -->
+
+</div>
+</body>
+
+<script>
+	layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel',
+			'upload', 'element' ], function() {
+		var laydate = layui.laydate //日期
+		, laypage = layui.laypage //分页
+		,layer = layui.layer //弹层
+		, table = layui.table //表格
+		, carousel = layui.carousel //轮播
+		, upload = layui.upload //上传
+		, element = layui.element; //元素操作
+		  
+		  //自定义每页条数的选择项
+		  laypage.render({
+		    elem: 'fenye'
+		    ,count: '[[${total}]]'
+		    ,limit: '[[${application.config.allpageSize}]]'
+		    ,curr:'[[${page}]]'
+		  ,jump: function(obj, first){
+		        
+				//首次不执行
+			    if(!first){
+			    	 console.log(obj);
+			    	 var curr_url = window.location.href;
+			    	 console.log(obj.curr);
+				     console.log(obj.limit);
+				     // http://localhost/type?id=1&page=2 
+				     // 使用js正则 去掉后面的&page=2 
+				     //  
+				     var reg = /page/g ;
+				     if(reg.test(curr_url)){
+				    	 //有page 需要 去掉后面的数字
+				    	 var reg = /page=\d+/ ;
+				    	 curr_url = curr_url.replace(reg,"page="+obj.curr);
+				    	 window.location.href=curr_url;
+				     }else{
+				    	 //没有page
+				    	 window.location.href=curr_url+'?page='+obj.curr;
+				     }
+				     
+			    }
+		    }
+		  });
+		  
+		  
+		  
+	});
+</script>
+</html>

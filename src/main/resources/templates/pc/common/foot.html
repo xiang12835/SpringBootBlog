@@ -1,0 +1,42 @@
+<meta charset="UTF-8" />
+<div class="content">
+		<div style="padding: 20px 0px 20px 0px;">
+			<div class="food_info">
+				<div class="food_info_item" style="width: 150px;">
+					<h3>服务说明</h3>
+					<a href="#">服务说明1</a>
+					<a href="#">服务说明1</a>
+					<a href="#">服务说明1</a>
+				</div>
+				<div class="food_info_item">
+					<h3>关于我们</h3>
+					<a href="#">关于我们1</a>
+				</div>
+				
+				<div class="food_info_item">
+					<h3>联系我们</h3>
+					<a href="#">联系方式:xxxxxx</a>
+				</div>
+			</div>
+			
+			
+			<!-- 【友情链接】开始  -->
+			<fieldset class="layui-elem-field">
+				<legend style="color: #795548">友情连接</legend>
+				<div class="layui-field-box">
+					<div class="link_list">
+						<a target="_blank" th:href="${link.url}"   th:text="${link.name}" th:each="link : ${application.linkList}"></a>
+					</div>
+				</div>
+			</fieldset>
+			<!-- 【友情链接】结束 -->
+	
+	<div style="overflow: hidden;">
+					<div style="display: inline-block; width: 200px; float: right;">
+						<a style="color: white;" target="_blank" href="http://www.miitbeian.gov.cn">豫ICP备17030132号-2</a>
+					</div>
+				</div>
+				
+		</div>
+
+</div>

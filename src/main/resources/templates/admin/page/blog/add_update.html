@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="|${application.config.webName}-${title}|"></title>
+
+
+<div th:include="/common/layui"></div>
+<div th:include="/common/jq"></div>
+<link rel="stylesheet" href="/css/pc/base.css">
+
+<script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.all.min.js"> </script>
+<!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+<!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+<script type="text/javascript" charset="utf-8" src="/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+<!--添加 vue  支持加载-->
+<script src="/vue/vue.min.js"></script>
+<!--添加 vue  支持加载-->
+
+<!--异步上传 js-->
+<script src="/AjaxFileUpload/ajaxfileupload.js"></script>
+<!--异步上传 js-->
+
+<!--图片剪辑 js css-->
+<script	src="/cropbox/cropbox.js"></script>
+<link href="/cropbox/style.css" rel="stylesheet" />
+<script	src="/cropbox/my_cropbox.js?version=44"></script>
+<!--图片剪辑 js css-->
+</head>
+
+<style>
+</style>
+<script th:if="${#bools.isTrue(isEdit)}">
+var state = '[[${blog.state}]]';
+</script>
+
+<script th:if="${#bools.isFalse(isEdit)}">
+var state = '[[${state}]]';
+</script>
+
+<script>
+function uploadFile(file){
+    $.ajaxFileUpload({
+        url : '/admin/blog/add_imageUrl', //用于文件上传的服务器端请求地址  
+        secureuri : false, //一般设置为false
+        fileElementId : 'file', //文件上传空间的id属性  <input type="file" id="file" name="file" />  
+        type : 'post',  
+        dataType : 'text', //返回值类型 一般设置为json  
+        success : function(result) //服务器成功响应处理函数  
+        {
+        	var result = $.parseJSON(result.replace(/<.*?>/ig,""));
+            if(result.success){
+            	app.imageUrl= result.path;
+    			$("#imageUrl_div").empty();
+            	$("#imageUrl_div").append('<img style="width: 200px;" src="'+result.path+'" />');
+            }
+        },
+        error : function(result)//服务器响应失败处理函数  
+        {  
+        }
+    });  
+    return false;
+}
+
+
+function upload_imgData(){
+	$.post("/admin/blog/add_cropper_image", {imgData : app.imgData}, function(result) {
+		if (result.success) {
+			app.imageUrl= result.path;
+			$("#imageUrl_div").empty();
+        	$("#imageUrl_div").append('<img style="width: 200px;" src="'+result.path+'" />');
+		}
+	},"json");
+}
+
+$(function(){
+	if("[[${blog?.blogType?.id}]]"!=""){
+		$("#typeId").val([[${blog?.blogType?.id}]]);
+	}
+});
+
+var save_url = '[[${save_url}]]';
+function save() {
+	var index = layer.msg('提交中，请稍候', {
+		icon : 16,
+		time : false,
+		shade : 0.8
+	});
+	
+	var typeId = $("#typeId").val();
+	app.content = UE.getEditor('editor').getContent();
+	app.contentNoTag = UE.getEditor('editor').getContentTxt();
+	app.summary = UE.getEditor('editor').getContentTxt().substr(0, 155);
+	
+	$.post(save_url, {title : app.title,content : app.content,'blogType.id':typeId,imageUrl:app.imageUrl,
+		state:state,contentNoTag:app.contentNoTag,summary:app.summary
+	}, function(result) {
+		if (result.success) {
+			if(result.btn_disable){
+				$("#save").attr("onclick","void();"); 
+				$("#save").text(result.msg); 
+				//询问框
+				layer.confirm(result.msg, {
+				  btn: ['好','我知道了'] //按钮
+				}, function(){
+					layer.closeAll();
+				}, function(){
+					layer.closeAll();
+				});
+				//询问框
+			}else{
+				layer.msg(result.msg, {icon: 1});
+			}
+			
+		} else {
+			layer.closeAll();//关闭loading
+			layer.msg(result.msg);
+		}
+	}, 'json');
+}
+</script>
+<body  id="app">
+
+<div class="wrap">
+
+<!-- 导航 -->
+<div class="model" style="background-color: #393D49;"   th:include="/pc/common/daohang" >
+</div>
+<!-- 导航 -->
+		
+		<div class="model" style="background-color: white; margin-top: 50px;">
+			<div class="content" style="min-height: 700px;">
+				
+				<div class="layui-form layui-form-pane" action="">
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">标题</label>
+				    <div class="layui-input-block">
+				      <input type="text"  v-model="title" th:value="${blog?.title}" autocomplete="off" placeholder="请输入标题" class="layui-input">
+				    </div>
+				  </div>
+				  
+				  <div class="layui-form-item">
+					<label class="layui-form-label">分类</label>
+					<div class="layui-input-block">
+						<select id="typeId" >
+							<option th:value="${type.id}"  th:text="${type.name}"  th:each="type: ${typeList}"></option>
+						</select>
+					</div>
+				</div>
+			 
+				  
+				<style>
+				.edui-editor {
+				z-index: 1  !important;}
+				</style>
+				<div class="layui-form-item layui-form-text">
+					<label class="layui-form-label">内容</label>
+					<div class="layui-input-block">
+						<script id="editor" name="content" type="text/plain"
+							style="width:100%;height:600px; "></script>
+					</div>
+				</div>
+					
+					
+			<div class="layui-form-item layui-form-text">
+			    <label class="layui-form-label">封面 （400 x 400大小的尺寸）</label>
+			    <div class="layui-input-block">
+			    
+			    <div style="border: 1px solid #e6e6e6; padding: 20px;">
+			    	
+			    	 <div style="display: flex;display: -webkit-flex;">
+					      <div style="color: #E91E63;font-weight: bold;width: 156px;line-height: 38px; font-size: 16px;">直接选择图片上传：</div>
+					      <div style=" flex:1;-webkit-flex:1;"><input style="border: 0;" type="file" name="file" id="file" onchange ="uploadFile(this)" class="layui-input" /></div>
+				      </div>
+				      <hr />
+			    
+				    <div class="container" style="width: 100%;   margin:0 auto; margin-bottom: 10px;">
+						<div>
+								<span style="color: #E91E63;font-weight: bold;width: 112px;line-height: 38px; font-size: 16px;">裁剪图片上传：</span>  
+								宽:<input type="text" id="w" value="400" style="width: 60px;"  onkeyup="initCutImg()" /> 
+								高:<input type="text" id="h" value="400" style="width: 60px;"  onkeyup="initCutImg()" /> 
+								<input type="button" onclick="initCutImg()" value="修改尺寸" />
+								<input	style="display: inline-block; margin-left: 20px;" type="file" class="" name="upload-file" id="upload-file" />
+						</div>
+						
+					<div class="imageBox">
+						<div class="thumbBox"></div>
+						<div class="spinner" style="display: none">请点选择图片</div>
+					</div>
+					<div class="CutImgBottomBar" style="position: relative;">
+						<button id="btnZoomIn" class="layui-btn layui-btn-xs">
+						<i class="layui-icon">&#xe65b;</i>放大
+						</button>
+						<button id="btnZoomOut" class="layui-btn layui-btn-xs">
+						<i class="layui-icon">&#xe65a;</i>缩小
+						</button>
+						<button id="btnCrop"
+							class="layui-btn layui-btn-xs layui-btn-danger">
+							<i class="layui-icon">&#xe65d;</i>裁切
+						</button>
+					</div>
+				</div>
+				 <hr />
+				 
+				<div id="imageUrl_div" style="min-height: 10px; position: relative; ">
+					<img style="width: 200px;margin-bottom: 10px;" alt=""   th:src="${blog?.imageUrl}" />
+				</div>
+			    </div>
+			    </div>
+			  </div>
+				
+				<div class="layui-form-item">
+					<div class="layui-input-block" style="margin-left: 0px;">
+						<button id="save" onclick="save()" class="layui-btn" th:text="${btn_text}"></button>
+						<a href="javascript:window.opener = null;window.open('', '_self');window.close();window.history.go(-1);window.location.href='https://www.baidu.com';"    class="layui-btn layui-btn-danger">关闭</a>
+
+					</div>
+				</div>
+				<div style="height: 200px;"></div>
+				</div>
+				
+			</div>
+		</div>
+
+
+<!-- 实例化百度编辑器 -->
+<script type="text/javascript">
+var ue = UE.getEditor('editor');
+UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+UE.Editor.prototype.getActionUrl = function(action) {
+	console.log(action);
+	// uploadscrawl 涂鸦上传 上传的是，base64 码。
+	// uploadfile  文件 上传
+	// uploadvideo 视频 上传
+    if (action == 'uploadimage' || action == 'uploadimage') {
+    	//图片上传
+        return '/ueditor/uploadimage'; 
+    } else if(action == 'uploadfile'){
+    	//文件上传
+    	return '/ueditor/uploadfile';
+    }else if(action == 'uploadscrawl'){
+    	// uploadscrawl 涂鸦上传 上传的是，base64 码。
+    	return '/ueditor/uploadscrawl';
+    }else if(action == 'uploadvideo'){
+    	// uploadvideo 视频 上传
+    	return '/ueditor/uploadvideo';
+    }else if(action == 'catchimage'){
+    	//远程 图片
+    	return '/ueditor/catchimage';
+    }else{
+    	 return this._bkGetActionUrl.call(this, action);
+    }
+}
+</script>
+<!-- 实例化百度编辑器 -->
+
+<script th:if="${#bools.isTrue(isEdit)}">
+ ue.addListener("ready",function(){
+ 	// 通过ajax请求数据
+ 	UE.ajax.request("/admin/blog/findById",
+ 			{
+ 				method:"post",
+ 				async:false,
+ 				data:{"id":[[${blog.id}]]},
+ 				onsuccess:function(result){
+ 					result=eval("("+result.responseText+")");
+ 					UE.getEditor('editor').setContent(result.content);
+ 				}
+			});
+ });
+ 
+ </script>
+
+
+<!-- 底部 内容 模块 -->
+<div class="model" style="background-color: #0c0d0e;"   th:include="/pc/common/foot">
+</div>
+<!-- 底部 内容 模块 -->
+			
+		
+</div>
+</body>
+
+<script>
+	layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel',
+			'upload', 'element' ], function() {
+		var laydate = layui.laydate //日期
+		, laypage = layui.laypage //分页
+		,layer = layui.layer //弹层
+		, table = layui.table //表格
+		, carousel = layui.carousel //轮播
+		, upload = layui.upload //上传
+		, element = layui.element; //元素操作
+		
+	});
+</script>
+<script>
+var app = new Vue({
+	el : '#app',
+	data : {}
+});
+</script>
+</html>

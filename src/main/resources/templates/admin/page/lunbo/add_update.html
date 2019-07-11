@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="${title}"></title>
+
+<div th:include="/common/layui"></div>
+<div th:include="/common/jq"></div>
+
+<!--异步上传 js-->
+<script src="/AjaxFileUpload/ajaxfileupload.js"></script>
+<!--异步上传 js-->
+
+<!--图片剪辑 js css-->
+<script	src="/cropbox/cropbox.js"></script>
+<link href="/cropbox/style.css" rel="stylesheet" />
+<script	src="/cropbox/my_cropbox.js?version=44"></script>
+<!--图片剪辑 js css-->
+
+<!--添加 vue  支持加载-->
+<script src="/vue/vue.min.js"></script>
+<!--添加 vue  支持加载-->
+
+<style>
+.layui-form-item {
+	margin-bottom: 3px;
+}
+</style>
+
+</head>
+<script>
+function uploadFile(file){
+    $.ajaxFileUpload({
+        url : '/admin/lunbo/add_imageUrl', //用于文件上传的服务器端请求地址  
+        secureuri : false, //一般设置为false
+        fileElementId : 'file', //文件上传空间的id属性  <input type="file" id="file" name="file" />  
+        type : 'post',  
+        dataType : 'text', //返回值类型 一般设置为json  
+        success : function(result) //服务器成功响应处理函数  
+        {
+        	var result = $.parseJSON(result.replace(/<.*?>/ig,""));
+            if(result.success){
+            	app.imageUrl= result.path;
+    			$("#imageUrl_div").empty();
+            	$("#imageUrl_div").append('<img style="width: 200px;" src="'+result.path+'" />');
+            }
+        },
+        error : function(result)//服务器响应失败处理函数  
+        {  
+        }
+    });  
+    return false;
+}
+
+
+function upload_imgData(){
+	$.post("/admin/lunbo/add_cropper_image", {imgData : app.imgData}, function(result) {
+		if (result.success) {
+			app.imageUrl= result.path;
+			$("#imageUrl_div").empty();
+        	$("#imageUrl_div").append('<img style="width: 200px;" src="'+result.path+'" />');
+		}
+	},"json");
+}
+
+var save_url = '[[${save_url}]]';
+function save() {
+	var index = layer.msg('提交中，请稍候', {
+		icon : 16,
+		time : false,
+		shade : 0.8
+	});
+	
+	$.post(save_url, {orderNo:app.orderNo,name:app.name,url:app.url,imageUrl:app.imageUrl
+	}, function(result) {
+		if (result.success) {
+			window.parent.closeDlg(result.msg);
+		} else {
+			layer.msg(result.msg);
+		}
+	}, 'json');
+}
+</script>
+<body id="app">
+	<div style="padding: 10px;" class="layui-form layui-form-pane" action="">
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">轮播名称</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="name" th:value="${lunbo?.name}"  autocomplete="off"
+					placeholder="请输入  轮播名称" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">轮播地址</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="url" th:value="${lunbo?.url}"  autocomplete="off"
+					placeholder="请输入  轮播地址" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">排序</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="orderNo" th:value="${lunbo?.orderNo}"  autocomplete="off"
+					placeholder="请输入    排序" class="layui-input">
+			</div>
+		</div>
+		
+				<div class="layui-form-item layui-form-text">
+			    <label class="layui-form-label">服务封面 （400 x 400大小的尺寸）</label>
+			    <div class="layui-input-block">
+			    
+			    <div style="border: 1px solid #e6e6e6; padding: 20px;">
+			    	
+			    	 <div style="display: flex;display: -webkit-flex;">
+					      <div style="color: #E91E63;font-weight: bold;width: 156px;line-height: 38px; font-size: 16px;">直接选择图片上传：</div>
+					      <div style=" flex:1;-webkit-flex:1;"><input style="border: 0;" type="file" name="file" id="file" onchange ="uploadFile(this)" class="layui-input" /></div>
+				      </div>
+				      <hr />
+			    
+				    <div class="container" style="width: 100%;   margin:0 auto; margin-bottom: 10px;">
+						<div>
+								<span style="color: #E91E63;font-weight: bold;width: 112px;line-height: 38px; font-size: 16px;">裁剪图片上传：</span>  
+								宽:<input type="text" id="w" value="400" style="width: 60px;"  onkeyup="initCutImg()" /> 
+								高:<input type="text" id="h" value="400" style="width: 60px;"  onkeyup="initCutImg()" /> 
+								<input type="button" onclick="initCutImg()" value="修改尺寸" />
+								<input	style="display: inline-block; margin-left: 20px;" type="file" class="" name="upload-file" id="upload-file" />
+						</div>
+						
+					<div class="imageBox">
+						<div class="thumbBox"></div>
+						<div class="spinner" style="display: none">请点选择图片</div>
+					</div>
+					<div class="CutImgBottomBar" style="position: relative;">
+						<button id="btnZoomIn" class="layui-btn layui-btn-xs">
+						<i class="layui-icon">&#xe65b;</i>放大
+						</button>
+						<button id="btnZoomOut" class="layui-btn layui-btn-xs">
+						<i class="layui-icon">&#xe65a;</i>缩小
+						</button>
+						<button id="btnCrop"
+							class="layui-btn layui-btn-xs layui-btn-danger">
+							<i class="layui-icon">&#xe65d;</i>裁切
+						</button>
+					</div>
+				</div>
+				 <hr />
+				 
+				<div id="imageUrl_div" style="min-height: 10px; position: relative; ">
+					<img style="width: 200px;margin-bottom: 10px;" alt=""   th:src="${lunbo?.imageUrl}" />
+				</div>
+			    </div>
+			    </div>
+			  </div>
+			  
+			  
+			  
+		
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" th:text="${btn_text}"  lay-submit="" lay-filter="demo1"
+					onclick="save()"></button>
+			</div>
+		</div>
+		
+	</div>
+	
+</body>
+
+<script th:inline="none">
+	layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel', 'upload',
+			'element' ], function() {
+		var laydate = layui.laydate //日期
+		, laypage = layui.laypage //分页
+		, layer = layui.layer //弹层
+		, table = layui.table //表格
+		, carousel = layui.carousel //轮播
+		, upload = layui.upload //上传
+		, element = layui.element; //元素操作
+		
+	});
+</script>
+
+<script>
+	var app = new Vue({
+		el : '#app',
+		data : {
+		}
+	});
+</script>
+</html>

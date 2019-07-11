@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="${blog.title}"></title>
+
+<meta name="description" th:content="${blog.summary}">
+
+<div th:include="/common/layui"></div>
+<div th:include="/common/jq"></div>
+
+<link rel="stylesheet" href="/css/pc/base.css?v=11">
+
+<script type="text/javascript" src="/ueditor/third-party/SyntaxHighlighter/shCore.js"></script>
+<link rel="stylesheet" href="/ueditor/third-party/SyntaxHighlighter/shCoreDefault.css">
+
+</head>
+<style>
+</style>
+
+<script>
+SyntaxHighlighter.all();
+
+$(function(){
+	//格式化时间
+	var now = new Date();
+
+	var time = $("#time").html();
+	time = time.replace(/-/g, '/'); // "2010/08/01";
+	//创建日期对象
+	var blogDate = new Date(time);
+	var date3=now.getTime()-blogDate.getTime()  //时间差的毫秒数
+	console.log(date3);
+	//计算出相差天数
+	var days=Math.floor(date3/(24*3600*1000));
+	//计算出小时数
+	var leave1=date3%(24*3600*1000);
+	//计算天数后剩余的毫秒数
+	var hours=Math.floor(leave1/(3600*1000))
+	//计算相差分钟数
+	var leave2=leave1%(3600*1000)        
+	//计算小时数后剩余的毫秒数
+	var minutes=Math.floor(leave2/(60*1000))
+	//计算相差秒数
+	var leave3=leave2%(60*1000)      
+	//计算分钟数后剩余的毫秒数
+	var seconds=Math.round(leave3/1000)
+	console.log(" 相差 "+days+"天 "+hours+"小时 "+minutes+" 分钟"+seconds+" 秒")
+	if(days>0){
+		if(days>20){
+		}else{
+			$("#time").html(days+"天前");
+		}
+	}else if(hours>0){
+		$("#time").html(hours+"小时前");
+	}else if(minutes>0){
+		$("#time").html(minutes+"分钟前");
+	}else{
+		$("#time").html("刚刚");
+	}
+	//格式化时间
+});
+
+</script>
+<body>
+
+<div class="wrap">
+
+<!-- 导航 -->
+<div class="model" style="background-color: #393D49;"   th:include="/pc/common/daohang" >
+</div>
+<!-- 导航 -->
+
+<style>
+.info{
+	padding:10px; 
+	margin-top:5px;     
+	background-color: #f8f8f8;
+}
+.info img{  
+	display:inline-block;
+	float:left;  
+	width: 45px;
+	height: 45px;
+	border-radius: 2px;
+}
+.info a{    
+	color: #01AAED;
+}
+
+#content{
+}
+#content img{
+	max-width: 100%;
+}
+    
+    
+</style>
+<div class="model" style="background-color: #9e9e9e40;">
+	<div class="content" style=" padding-top: 20px; padding-bottom: 20px;">
+			
+			<div class="layui-row">
+				
+				<div  class="layui-col-xs9"   >
+					
+					<!-- 内容 选项卡开始  -->
+					<div class="fly-card" style="min-height: 200px;" >
+						<div style="padding: 20px;">
+							<h1 th:text="${blog.title}"></h1>
+							
+							<div style="position: relative; overflow: hidden;  margin-top:5px;  ">
+								<span style="display:inline-block; float: right;" th:text="|浏览:${blog.clickHit}|">浏览:001</span>
+							</div>
+							
+							<div class="info" style="min-height: 56px; ">
+								<img th:title="${blog.user.trueName}" th:src="${blog.user.imageUrl}"  />
+								<div style="float: left; padding-left: 10px;">
+									<a href="#" class="fly-list-name" th:text="${blog.user.trueName}">作者</a>
+									<span id="time" style="padding-left: 10px;    color: #999;" th:text="${#dates.format(blog.createDateTime, 'yyyy-MM-dd HH:mm')}">2018-55-55</span>
+								</div>
+							</div>
+							
+							<div id="content" th:utext=${blog.content} style="margin-top: 20px; min-height: 300px;">
+							</div>
+							
+						</div>
+					</div>
+					<!-- 内容 选项卡结束  -->
+					
+					
+					<!-- 回复 选项卡开始  -->
+					<div class="fly-card" id="reply" style="margin-top: 15px;" >
+						<div class="fly-card-header" style="text-align: center;">回复</div>
+						<div class="fly-card-body" style="min-height: 100px;padding-bottom: 0px; ">
+							
+							<!--PC和WAP自适应版      sid 要根据自己的情况  使用自己的。    -->  
+								<div id="SOHUCS" th:sid="|blog_java456_com_${blog.id}|" ></div> 
+								<script type="text/javascript"> 
+								(function(){ 
+								var appid = 'cyuigESyo'; 
+								var conf = 'prod_5f1f100fc3c18717f3b20b188463a436'; 
+								var width = window.innerWidth || document.documentElement.clientWidth; 
+								if (width < 960) { 
+								window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("http://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+							<!--PC和WAP自适应版-->
+															
+						</div>
+					</div> <!-- 回复 选项卡结束 -->
+
+					
+					
+					
+					
+				</div>
+				
+				<div class="layui-col-xs3"   style="padding-left: 10px;"   th:include="/pc/common/index_right_page">
+				</div>
+			</div>
+			
+		<div style=" clear:both;"></div><!--content 内部   清除浮动 -->
+	</div>
+</div>
+
+<!-- 底部 内容 模块 -->
+<div class="model" style="background-color: #0c0d0e;"   th:include="/pc/common/foot">
+</div>
+<!-- 底部 内容 模块 -->
+			
+</div>
+</body>
+
+<script>
+	layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel',
+			'upload', 'element' ], function() {
+		var laydate = layui.laydate //日期
+		, laypage = layui.laypage //分页
+		,layer = layui.layer //弹层
+		, table = layui.table //表格
+		, carousel = layui.carousel //轮播
+		, upload = layui.upload //上传
+		, element = layui.element; //元素操作
+		
+		//调用示例
+        layer.photos({
+          photos: '#content'
+          ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        }); 
+
+		
+	});
+</script>
+</html>

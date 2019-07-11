@@ -1,0 +1,15 @@
+<meta charset="UTF-8" />
+<div class="content">
+	<div style="width: 100%; overflow: hidden; min-height: 600px;">
+		
+		<div style="display: inline-block; float: left; margin-bottom: 10px; width: 24%; margin-right: 10px;" th:each="dongman: ${dongmanList}">
+			<a th:href="|/a/dong/man/${dongman.id}|" >
+				<img style="width: 100%;" th:src="${dongman.imageUrl}" />
+				<div style="line-height: 20px; height: 40px;overflow: hidden;"  th:text="${dongman.title}"></div>
+			</a>
+		</div>
+		
+	</div>
+	<!--content 内部   清除浮动 -->
+	<div style=" clear:both;"></div>
+</div>

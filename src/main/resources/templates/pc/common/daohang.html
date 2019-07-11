@@ -1,0 +1,59 @@
+<meta charset="UTF-8" />
+
+<script>
+function search(){
+	var q = $("#q").val();
+	if(q.length<1){
+		layer.msg('请输入搜索内容');
+		return null;
+	}
+	window.location.href='/search?q='+q;
+}
+</script>
+
+<div class="content">
+		<div style="float: left; height: 60px; overflow: hidden;">
+			<a style="display: block;" href="/index">
+				<img src="/image/base/logo.png" />
+			</a>
+		</div>
+		
+		<div style=" float:left; ">
+			<ul class="layui-nav">
+				<li class="layui-nav-item">
+					<a href="/index">首页</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/all">全部文章</a>
+				</li>
+			</ul>
+		</div>
+		
+		<div style="float:right;">
+			<ul class="layui-nav">
+				<li class="layui-nav-item" lay-unselect=""  >
+					<a href="javascript:;"><img src="/image/base/default_head_img.jpg" class="layui-nav-img">帮助</a>
+					<dl class="layui-nav-child">
+						<dd>
+							<a href="/login">登录</a>
+						</dd>
+						<dd>
+							<a href="/blog/8">关于站长</a>
+						</dd>
+						<dd>
+							<a href="/blog/9">本站源码下载</a>
+						</dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
+		
+		<div style="float:right; height: 60px; padding-right: 43px;">
+			<input id="q" th:value="${q}"  onkeydown="if(event.keyCode==13) search()"  placeholder="输入搜索内容"  type="text" style="width:234px;  background-color:#999; border: 0px; height: 30px; margin-top: 13px;color: white;  border-radius: 10px; "  />
+			<input type="button" onclick="search()" value="搜索" />
+		</div>
+		
+		<!--content 内部   清除浮动 -->
+		<div style=" clear:both;"></div>
+</div>
+

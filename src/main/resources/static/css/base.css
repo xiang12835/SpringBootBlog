@@ -1,0 +1,226 @@
+
+
+.layui-elem-quote {
+    margin-bottom: 10px;
+    padding: 15px;
+    line-height: 22px;
+    border-left: 5px solid #009688;
+    border-radius: 0 2px 2px 0;
+    background-color: #bbb;
+}
+.layui-btn {
+    display: inline-block;
+    height: 38px;
+    line-height: 38px;
+    padding: 0 18px;
+    background-color: #009688;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 14px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.layui-btn-normal {
+    background-color: #1E9FFF;
+}
+.layui-btn-xs {
+    height: 22px;
+    line-height: 22px;
+    padding: 0 5px;
+    font-size: 12px;
+}
+
+/* 
+会员列表 头部选项卡 */
+.select_default{
+    font-size: 15px;
+    font-weight: 400;
+    position: relative;
+    display: table;
+    overflow: hidden;
+    width: 100%;
+    table-layout: fixed;
+    border: 1px solid #007aff;
+    border-radius: 3px;
+    background-color: transparent;
+    -webkit-touch-callout: none;
+}
+.select_item{
+    line-height: 38px;
+    display: table-cell;
+    overflow: hidden;
+    width: 1%;
+    -webkit-transition: background-color .1s linear;
+    transition: background-color .1s linear;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #007aff;
+    border-color: #007aff;
+    border-left: 1px solid #007aff;
+}
+.select_act{
+	color: #fff;
+	background-color: #007aff;
+}
+/* 会员列表 头部选项卡 */
+
+
+/* 列表 */
+.my_list{
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+    background-color: #fff;
+}
+.my_list:before {
+    position: absolute;
+    right: 0;
+    left: 0;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+    top: -1px;
+}
+.my_list:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+.my_list_item{
+    position: relative;
+}
+.my_list_item:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+/* 列表 */
+
+
+/* 表格下面的一条线齐长 */
+.my_list_item:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0px;
+    right: 0px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+	background-color: #c8c7cc;
+}
+/* 表格下面的一条线齐长 */
+
+
+/* 文章列表模块css */
+.fly-card{
+	width: 100%; 
+	border-radius:4px;
+	background-color: white; 
+}
+.fly-card-header{
+	border-bottom: 1px solid #66666626; 
+	line-height: 50px; 
+	padding-left:10px; 
+	padding-right: 10px; 
+	color: #0a0a0a; 
+	font-size: 14px; 
+}
+.fly-card-body{
+}
+        
+
+.fly-list{
+	padding: 0px 10px 0px 10px;
+}
+.fly-list-item{
+	padding: 10px  0px 10px 0px;   
+	display: flex;
+	display: -webkit-flex; 
+	border-bottom: 1px solid #9e9e9e14;
+}
+.fly-head{
+	width: 63px;
+	/* background-color: #673ab714; */
+}
+.fly-head img{
+	width: 45px; 
+	height: 45px;
+	border-radius: 2px;
+}
+.fly-right{
+	width:80px;
+	/* background-color: #9e9e9e08;  */
+}
+.fly-right span{
+	text-align:right;
+	display: block;
+	margin-top: 34px;
+	font-size: 13px;
+	color: #666;
+	white-space:nowrap;
+}
+
+.fly-list-type{
+vertical-align: top;
+    display: inline-block;
+	top: -2px;
+	height: 16px;
+	line-height: 16px;
+	padding: 0 5px;
+	margin-right: 10px;
+	font-size: 12px;
+	border: 1px solid #5FB878;
+	background: none;
+	color: #5FB878;
+}
+.fly-list-type:hover{
+	color: #5FB878;
+}
+.fly-list-title{
+	vertical-align: top;
+	color: #333;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+	width:510px;
+	overflow: hidden;
+	display: inline-block;
+}
+.fly-list-title:hover{
+	color: #009688;
+	text-decoration:underline;
+}
+.fly-list-name{    
+color: #999;
+}
+.fly-list-name:hover{    
+color: #5FB878;
+}
+.fly-list-time{
+	margin-left: 21px;    
+	color: #999;
+}
+/* 文章列表模块css */
+
+

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="${title}"></title>
+
+<div th:include="/common/layui"></div>
+<div th:include="/common/jq"></div>
+
+<!--添加 vue  支持加载-->
+<script src="/vue/vue.min.js"></script>
+<!--添加 vue  支持加载-->
+
+<style>
+.layui-form-item {
+	margin-bottom: 3px;
+}
+</style>
+
+</head>
+<script  th:inline="javascript">
+/*<![CDATA[*/
+	
+$(function(){
+	if("[[${menu?.state}]]"!="null"){
+		$("#state").val([[${menu?.state}]]);
+	}
+	
+	if("[[${menu?.type}]]"!="null"){
+		$("#type").val([[${menu?.type}]]);
+	}
+});
+	
+	var save_url = [[${save_url}]];
+	function save() {
+		var index = layer.msg('提交中，请稍候', {
+			icon : 16,
+			time : false,
+			shade : 0.8
+		});
+		
+		var state = $("#state").val();
+		var type = $("#type").val();
+		
+		$.post(save_url, {pId:[[${pId}]],orderNo:app.orderNo,name:app.name,url:app.url,state:state,icon:app.icon,permissions:app.permissions,type:type,divId:app.divId
+		}, function(result) {
+			if (result.success) {
+				window.parent.closeDlg(result.msg);
+			} else {
+				layer.msg(result.msg);
+			}
+		}, 'json');
+	}
+	
+/*]]>*/
+</script>
+<body id="app">
+	<div style="padding: 10px;" class="layui-form layui-form-pane" action="">
+		
+		<div>星&amp;#xe67a;  纸飞机&amp;#xe609;</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">菜单名称</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="name" th:value="${menu?.name}"  autocomplete="off"
+					placeholder="请输入  菜单名称" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">菜单地址</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="url" th:value="${menu?.url}"  autocomplete="off"
+					placeholder="请输入  菜单地址" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+		    <label class="layui-form-label">节点类型</label>
+		    <div class="layui-input-block">
+		      <select id="state" name="interest" lay-filter="aihao">
+		        <option value="0">根节点</option>
+		        <option value="1">叶子节点</option>
+		      </select>
+		    </div>
+		  </div>
+			
+		<div class="layui-form-item">
+			<label class="layui-form-label">图标</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="icon" th:value="${menu?.icon}"  autocomplete="off"
+					placeholder="请输入  图标" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">权限名称</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="permissions" th:value="${menu?.permissions}"  autocomplete="off"
+					placeholder="请输入    权限名称" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+		    <label class="layui-form-label">打开方式</label>
+		    <div class="layui-input-block">
+		      <select id="type" name="interest" lay-filter="aihao">
+		        <option value="0">选项卡内打开</option>
+		        <option value="1">新窗口打开</option>
+		        <option value="2">弹出窗口打开</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  <div class="layui-form-item">
+			<label class="layui-form-label">layui,id</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="divId" th:value="${menu?.divId}"  autocomplete="off"
+					placeholder="请输入    layui,id" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">排序号</label>
+			<div class="layui-input-block">
+				<input type="text"  v-model="orderNo" th:value="${menu?.orderNo}"  autocomplete="off"
+					placeholder="请输入   排序号" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" th:text="${btn_text}"  lay-submit="" lay-filter="demo1"
+					onclick="save()"></button>
+			</div>
+		</div>
+		
+	</div>
+	
+</body>
+
+<script th:inline="none">
+	layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel', 'upload',
+			'element' ], function() {
+		var laydate = layui.laydate //日期
+		, laypage = layui.laypage //分页
+		, layer = layui.layer //弹层
+		, table = layui.table //表格
+		, carousel = layui.carousel //轮播
+		, upload = layui.upload //上传
+		, element = layui.element; //元素操作
+		
+	});
+</script>
+
+<script>
+	var app = new Vue({
+		el : '#app',
+		data : {
+		}
+	});
+</script>
+</html>

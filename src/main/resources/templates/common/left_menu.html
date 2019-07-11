@@ -1,0 +1,20 @@
+
+<meta charset="UTF-8">
+
+<!-- left 导航  -->
+<div class="layui-side layui-bg-black" id="left_menu" style="top: 60px; ">
+<div class="layui-side-scroll">
+	
+	<ul class="layui-nav layui-nav-tree" lay-filter="left_menu">
+		<li class="layui-nav-item layui-nav-itemed"   th:each="node : ${list}">
+			<a href="javascript:;"  th:text="${node.text}"></a>
+			<dl class="layui-nav-child" th:each="item : ${node.children}">
+				<dd th:dd_text="${item.text}"  th:type="${item.type}"  th:url="${item.url}" th:id="${item.divId}"><a href="#"><i th:utext="${item.icon}" class="layui-icon"></i>&nbsp; [[${item.text}]]</a></dd>
+			</dl>
+		</li>
+	</ul>
+	
+</div>
+
+</div>
+<!-- left 导航 结束 div -->

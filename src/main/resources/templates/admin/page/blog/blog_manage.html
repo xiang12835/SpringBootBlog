@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="${title}"></title>
+
+<div th:include="/common/layui"></div>
+<div th:include="/common/jq"></div>
+
+
+<!--添加 layui 自己的js  支持加载-->
+<script	src="/manage/manage_base.js"></script>
+<!--添加 layui 自己的js  支持加载-->
+</head>
+
+<style>
+/*修改table表格  左右内边框 为0*/
+.layui-table-cell {
+	padding-left: 0px;
+	padding-right: 0px;
+	text-align: center;
+}
+/*修改table表格 左右内边框 为0*/
+
+/* 修改左右pading为 0  */
+.layui-form-pane .layui-form-label{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+/* 修改左右pading为 0  */
+    
+</style>
+
+<script>
+//定义在外面。可以代码中  使用 table
+var table;
+layui.use([ 'laydate', 'laypage', 'layer','form', 'table', 'carousel',
+			'upload', 'element' ], function() {
+	table = layui.table;
+});
+
+var global_ids;
+var global_ids_len;
+
+var w ;//窗口的宽
+var h ;//窗口的高
+
+//add
+function add(){
+	window.open('/houtai/blog/add');
+}
+
+//打开编辑窗口
+function edit(id){
+	window.open('/houtai/blog/edit?id='+id)
+}
+
+//子窗口调用 的  关闭窗口方法 
+function closeDlg(msg){
+	 layer.closeAll();
+	 layer.msg(msg);
+	 reload_data();
+}
+
+//相当前刷新  重新加载
+function reload_data(){
+	var blogTypeId = $("#blogTypeId").val();
+	var state = $("#state").val();
+	var useIt = $("#useIt").val();
+	var q = $("#q").val();
+  table.reload('table', {
+		where: {blogTypeId:blogTypeId,state:state,useIt:useIt,q:q
+	     },page: {curr: 1 //重新从第 1 页开始
+				}
+    });
+}
+
+function del(ids){
+	var index = layer.load(1, {
+		  shade: [0.1,'#fff'] //0.1透明度的白色背景
+	});
+	$.post('/admin/blog/delete',{ids:ids},function(result){
+		if(result.success){
+			layer.closeAll();
+			layer.msg('删除成功');
+			reload_data();
+		}else{
+			layer.closeAll();
+			layer.msg(result.msg);
+		}
+	},'json');
+}
+
+function updateLucene(id){
+	var index = layer.load(1, {
+		  shade: [0.1,'#fff'] //0.1透明度的白色背景
+	});
+	$.post('/admin/blog/updateLucene',{id:id},function(result){
+		if(result.success){
+			layer.closeAll();
+			layer.msg(result.msg);
+			reload_data();
+		}else{
+			layer.closeAll();
+			layer.msg(result.msg);
+		}
+	},'json');
+}
+
+function deleteLucene(id){
+	var index = layer.load(1, {
+		  shade: [0.1,'#fff'] //0.1透明度的白色背景
+	});
+	$.post('/admin/blog/deleteLucene',{id:id},function(result){
+		if(result.success){
+			layer.closeAll();
+			layer.msg(result.msg);
+			reload_data();
+		}else{
+			layer.closeAll();
+			layer.msg(result.msg);
+		}
+	},'json');
+}
+
+
+
+function seeImg(url){
+	w = 600;
+	h = 600;
+	checkWindow();
+	//iframe层
+	if(!url){
+		url = "   ";
+	}
+	layer.open({
+	  type: 2,
+	  title: '图片',
+	  shadeClose: true,
+	  shade: 0.8,
+	  area: [w+'px', h+'px'],
+	  content: url //iframe的url
+	});
+}
+function update_useIt(id,useIt){
+	$.post('/admin/blog/update',{id:id,useIt:useIt},function(result){
+		if(result.success){
+			layer.msg('修改成功');
+		}else{
+			layer.msg('修改失败');
+		}
+	},'json');
+}
+function update_state(id,state){
+	$.post('/admin/blog/update',{id:id,state:state},function(result){
+		if(result.success){
+			layer.msg('修改成功');
+		}else{
+			layer.msg('修改失败');
+		}
+	},'json');
+}
+
+</script>
+<body style="padding-top: 3px;">
+
+
+<div class="layui-table-toolbar" style="margin-bottom: 3px; ">
+	<div class="layui-btn-group">
+		<button onclick="add()"  class="layui-btn layui-btn-sm"><i class="layui-icon">&#xe654;</i>添加</button>
+		<button onclick="delSelected()" class="layui-btn layui-btn-sm layui-btn-danger"><i class="layui-icon">&#xe640;</i>删除</button>
+	    <button class="layui-btn layui-btn-sm" onclick="reload_data()"><i class="layui-icon">&#xe669;</i>刷新</button>
+ 	 </div>
+</div>
+
+<div class="layui-form layui-form-pane" style="margin-bottom: 3px; "  >
+  <div class="layui-form-item" style="margin-bottom: 1px; min-width:1051px;">
+    <label class="layui-form-label" style="width: 55px;">分类</label>
+    <div class="layui-input-inline" style="width: 88px; margin-right: 0px;">
+    	 <select name="blogTypeId" id="blogTypeId"   lay-filter="blogTypeId"  >
+	    	 <option value="">全部</option>
+	    	 <option th:value="${type.id}"  th:text="${type.name}"  th:each="type: ${typeList}"></option>
+          </select>
+    </div>
+    
+    <label class="layui-form-label" style="width: 55px;">审核</label>
+    <div class="layui-input-inline" style="width: 88px; margin-right: 0px;">
+    	 <select name="state" id="state"   lay-filter="state"  >
+	    	 <option value="">全部</option>
+	    	 <option value="0">待审核</option>
+	    	 <option value="1">已审核</option>
+          </select>
+    </div>
+    
+    <label class="layui-form-label" style="width: 55px;">置顶</label>
+    <div class="layui-input-inline" style="width: 88px; margin-right: 0px;">
+    	 <select name="useIt" id="useIt"   lay-filter="useIt"  >
+	    	 <option value="">全部</option>
+	    	 <option value="1">是</option>
+	    	  <option value="0">否</option>
+          </select>
+    </div>
+    
+    <label class="layui-form-label" style="width: 55px;">搜索</label>
+    <div class="layui-input-inline" style="width: 128px; margin-right: 0px;">
+    	 <input type="text" id="q"  placeholder="输入搜索内容" class="layui-input"  onkeydown="if(event.keyCode==13) reload_data()" />
+    </div>
+    
+    <div class="layui-input-inline" style="  width: 113px;">
+	    	<a class="layui-btn" onclick="reload_data()">查询</a>
+	</div>
+  </div>
+</div>
+
+<table class="layui-hide"   id="table" lay-filter="table"></table>
+</body>
+
+<script type="text/html" id="table_bar">
+<div class="layui-btn-group">
+	<a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+	<a class="layui-btn layui-btn-xs  layui-btn-normal" lay-event="see">查看</a>
+	<a class="layui-btn layui-btn-xs  layui-btn-primary" lay-event="updateLucene">重新索引</a>
+	<a class="layui-btn layui-btn-xs  layui-btn-danger" lay-event="deleteLucene">删除索引</a>
+</div>
+</script>
+
+<script type="text/html" id="format_type">
+{{#  if(d.blogType){ }}
+{{ d.blogType.name}}
+{{#  }   }}
+</script>
+
+<script type="text/html" id="format_client">
+{{#  if(d.user){ }}
+{{ d.user.trueName}}
+{{#  } else{   }}
+ {{#  } }}
+</script>
+
+<script type="text/html" id="format_url">
+{{#  if(d.id){ }}
+/blog/{{d.id}}
+{{#  }   }}
+</script>
+
+<script type="text/html" id="format_imageUrl">
+  {{#  if(d.imageUrl != null){ }}
+<img style="width: 30px; height: 30px;" alt="" src="{{d.imageUrl}}" onclick="seeImg('{{d.imageUrl}}') " />
+  {{#  } else { }}
+  {{#  } }}
+</script>
+
+<script type="text/html" id="format_useIt">
+  <input type="checkbox" name="content" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="tp_useIt" {{ d.useIt == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="format_state">
+  <input type="checkbox" name="content" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="tp_state" {{ d.state == 1 ? 'checked' : '' }}>
+</script>
+<script th:inline="none">
+/*<![CDATA[*/
+		layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel',
+				'upload', 'element' ], function() {
+			var laydate = layui.laydate //日期
+			, laypage = layui.laypage //分页
+			,layer = layui.layer //弹层
+			,form= layui.form 
+			, table = layui.table //表格
+			, carousel = layui.carousel //轮播
+			, upload = layui.upload //上传
+			, element = layui.element; //元素操作
+			
+			  table.render({
+			    elem: '#table'
+			    ,url: '/admin/blog/list'
+			    ,height: 'full-60'
+			    ,totalRow: true
+				,cols: [[
+			       {checkbox: true, fixed: true}
+			       
+				   ,{field:'imageUrl', title: '封面', width:80, templet: '#format_imageUrl',style:'font-size: 12px;'}
+			       ,{field:'typeId', title: '分类', width:90,style:'font-size: 12px;',templet: '#format_type' }
+			      ,{field:'title', title: '标题', width:500,style:'font-size: 12px;' }
+			      ,{field:'clientId', title: '创建人', width:90,style:'font-size: 12px;',templet: '#format_client' }
+			      ,{field:'createDateTime', title: '创建时间', width:140 ,style:'font-size: 12px;'}
+			      ,{field:'state', title: '是否审核', width:90, templet: '#format_state',style:'font-size: 12px;'  }
+			      ,{field:'useIt', title: '是否首页置顶', width:90, templet: '#format_useIt',style:'font-size: 12px;'  }
+			      ,{field:'url', title: '链接', width:120, templet: '#format_url',style:'font-size: 12px;'  }
+			      
+			      
+			      ,{field:'clickHit', title: '点击', width:60, style:'font-size: 12px;'  }
+			      ,{field:'replyHit', title: '回复', width:60,  style:'font-size: 12px;'  }
+			      
+			      
+			      ,{fixed:'right', width:250,title: '操作',  toolbar: '#table_bar'}
+			       ]]
+			    ,id: 'table'
+			    ,page: true
+			    ,limits:[500,1000,2000,3000],
+			   limit:100
+			  });
+			
+			//监听工具条 table_bar
+				table.on('tool(table)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+					var data = obj.data //获得当前行数据
+					, layEvent = obj.event; //获得 lay-event 对应的值
+					if (layEvent === 'edit') {
+						edit(data.id);
+					} else if(layEvent === 'see'){
+						window.open('/blog/'+data.id)
+					}else if(layEvent=='updateLucene'){
+						updateLucene(data.id);
+					}else if(layEvent=='deleteLucene'){
+						deleteLucene(data.id);
+					}
+				});
+			
+				 //是否显示
+				  form.on('switch(tp_useIt)', function(obj){
+				    //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+				    if(obj.elem.checked){
+				    	update_useIt(this.value,1);
+				    }else{
+				    	update_useIt(this.value,0);
+				    }
+				  });
+				
+				  //是否显示
+				  form.on('switch(tp_state)', function(obj){
+				    //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+				    if(obj.elem.checked){
+				    	update_state(this.value,1);
+				    }else{
+				    	update_state(this.value,0);
+				    }
+				  });
+				  
+				  form.on('select(blogTypeId)', function(data){
+					  reload_data();
+					});
+				  
+				  form.on('select(state)', function(data){
+					  reload_data();
+					});
+				  form.on('select(useIt)', function(data){
+					  reload_data();
+					});
+		});
+		/*]]>*/
+</script>
+
+
+
+</html>

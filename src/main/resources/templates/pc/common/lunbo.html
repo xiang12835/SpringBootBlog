@@ -1,0 +1,29 @@
+<meta charset="UTF-8" />
+<div class="content">
+	<div style="width: 100%; overflow: hidden;">
+		 
+		 <div style="">
+		 	<div id="l1" style="height:400px; overflow: hidden; width: 50%; float: left;  background-color: #6b712f5e;">
+		 	 <a th:href="${lunboList[0].url}"><img th:src="${lunboList[0].imageUrl}" /></a>
+		 	</div>
+		 	
+		 	<div style="height:400px; overflow: hidden; width: 50%; float: left;  ">
+		 		<div id="l2" style="height:200px; overflow: hidden; background-color: #f2f6c9ed;">
+		 			<a th:href="${lunboList[1].url}"><img th:src="${lunboList[1].imageUrl}" /></a>
+		 		</div>
+		 		<div style="height:200px; overflow: hidden;  ">
+		 			<div id="l3" style="height:200px; overflow: hidden;  width: 50%; float: left; background-color: #f4ff8442;">
+		 				<a th:href="${lunboList[2].url}"><img th:src="${lunboList[2].imageUrl}" /></a>
+		 			</div>
+		 			<div id="l4" style="height:200px; overflow: hidden;  width: 50%; float: left; background-color: #f2f5d945;">
+		 				<a th:href="${lunboList[3].url}"><img th:src="${lunboList[3].imageUrl}" /></a>
+		 			</div>
+		 		</div>
+		 	</div>
+		 	
+		 </div>
+		 
+	</div>
+	<!--content 内部   清除浮动 -->
+	<div style=" clear:both;"></div>
+</div>

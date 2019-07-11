@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="${application.config.indexTitle}"></title>
+<meta name="keywords" th:content="${application.config.keywords}" />
+<meta name="description" th:content="${application.config.description}" />
+
+<div th:include="/common/layui"></div>
+<div th:include="/common/jq"></div>
+
+<link rel="stylesheet" href="/css/pc/base.css?v=11">
+<script	src="/js/pc/base.js"></script>
+
+</head>
+<style>
+</style>
+<script>
+$(function(){
+	formartTime("top");
+	formartTime("index");
+});
+</script>
+<body>
+
+<div class="wrap">
+
+<!-- 导航 -->
+<div class="model" style="background-color: #393D49;"   th:include="/pc/common/daohang" >
+</div>
+<!-- 导航 -->
+
+<!-- 轮播 -->
+<div class="model" style="background-color: #9e9e9e40;"   th:include="/pc/common/lunbo" >
+</div>
+<!-- 轮播 -->
+
+<div class="model" style="background-color: #9e9e9e40; overflow: hidden;">
+	<div class="content" style=" padding-top: 20px; padding-bottom: 20px; overflow: hidden;">
+			
+			<div class="layui-row">
+				<div class="layui-col-xs9" th:include="/pc/common/index_left_page"    >
+				</div>
+				<div class="layui-col-xs3"  style="padding-left: 8px;"   th:include="/pc/common/index_right_page">
+				</div>
+			</div>
+			
+			<div style=" clear:both;"></div><!--content 内部   清除浮动 -->
+	</div>
+	
+</div>
+
+
+
+<!-- 底部 内容 模块 -->
+<div class="model" style="background-color: #0c0d0e;"   th:include="/pc/common/foot">
+</div>
+<!-- 底部 内容 模块 -->
+			
+</div>
+</body>
+
+<script>
+	layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel',
+			'upload', 'element' ], function() {
+		var laydate = layui.laydate //日期
+		, laypage = layui.laypage //分页
+		,layer = layui.layer //弹层
+		, table = layui.table //表格
+		, carousel = layui.carousel //轮播
+		, upload = layui.upload //上传
+		, element = layui.element; //元素操作
+		
+		 //常规轮播
+		  carousel.render({
+		    elem: '#lunbo'
+		    	 ,width: '100%'
+		    		    ,height: '400px'
+		    ,arrow: 'always'
+		  });
+		
+		  //总页数低于页码总数
+		  laypage.render({
+		    elem: 'demo0'
+		    ,count: 50 //数据总数
+		  });
+		  
+		  
+	});
+</script>
+</html>
